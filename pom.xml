@@ -1,0 +1,20 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.pepito.app</groupId>
+  <artifactId>horse-race-multimodule</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>app</module>
+    <module>service</module>
+    <module>util</module>
+  </modules>
+
+  <properties>
+    <apacheVersion>[3.7,]</apacheVersion>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+
+</project>

@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TableServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">com.service</a> &gt; <a href="index.source.html" class="el_package">com.service</a> &gt; <span class="el_source">TableServiceImpl.java</span></div><h1>TableServiceImpl.java</h1><pre class="source lang-java linenums">package com.service;
+
+import java.util.Scanner;
+import java.util.LinkedList;
+import java.util.Collections;
+import java.util.Random;
+import java.io.File;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.PrintWriter;
+import java.io.IOException;
+
+public class TableServiceImpl implements TableServiceInterface{
+<span class="fc" id="L14">	private LinkedList&lt;LinkedList&lt;String&gt;&gt; keys = new LinkedList&lt;LinkedList&lt;String&gt;&gt;();</span>
+<span class="fc" id="L15">	private LinkedList&lt;LinkedList&lt;String&gt;&gt; values = new LinkedList&lt;LinkedList&lt;String&gt;&gt;();</span>
+	private File file;
+	private BufferedReader bufferedReader;
+<span class="fc" id="L18">	int keyOccurrence=0;</span>
+<span class="fc" id="L19">	int valueOccurrence=0;</span>
+<span class="fc" id="L20">	int overallOccurrence=0;</span>
+
+<span class="fc" id="L22">	public TableServiceImpl() {</span>
+<span class="fc" id="L23">		populateTable();</span>
+<span class="fc" id="L24">		file = new File(&quot;defaultFile.txt&quot;);</span>
+<span class="fc" id="L25">	}</span>
+
+<span class="fc" id="L27">	public TableServiceImpl(String filename,String fileContents){</span>
+<span class="fc" id="L28">		file = new File((String) filename);</span>
+		String[] pairs;
+		String[] keyValuePair;
+<span class="fc" id="L31">		String line = null;</span>
+
+			// System.out.println(filename);
+<span class="fc" id="L34">			int counter=0;</span>
+<span class="fc" id="L35">			Scanner scanner = new Scanner(fileContents);</span>
+			try{
+<span class="fc bfc" id="L37" title="All 2 branches covered.">			while (scanner.hasNextLine()) {</span>
+<span class="fc" id="L38">			  line = scanner.nextLine();</span>
+<span class="fc" id="L39">				pairs = line.split(&quot;\t\t&quot;);</span>
+<span class="fc" id="L40">				keys.add(new LinkedList&lt;String&gt;());</span>
+<span class="fc" id="L41">				values.add(new LinkedList&lt;String&gt;());</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">				for(String pair : pairs) {</span>
+<span class="fc" id="L43">					keyValuePair = pair.split(&quot;\t&quot;);</span>
+<span class="fc" id="L44">					keys.get(counter).add(keyValuePair[0]);</span>
+<span class="fc" id="L45">					values.get(counter).add(keyValuePair[1]);</span>
+				}
+<span class="fc" id="L47">				counter++;</span>
+			}
+<span class="fc" id="L49">			scanner.close();</span>
+<span class="fc" id="L50">		}catch(Exception ex) {</span>
+<span class="fc" id="L51">			System.out.println(&quot;File contains an invalid key-value format. Generating a new table&quot;);</span>
+<span class="fc" id="L52">			populateTable();</span>
+<span class="fc" id="L53">		}</span>
+<span class="fc" id="L54">	}</span>
+
+	public void populateTable() {
+<span class="fc" id="L57">		keys.clear();</span>
+<span class="fc" id="L58">		values.clear();</span>
+<span class="fc" id="L59">		Random random = new Random();</span>
+<span class="fc" id="L60">		int rows = random.nextInt(5)+1;</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">		for(int x=0;x&lt;rows;x++){</span>
+<span class="fc" id="L62">			addRow();</span>
+		}
+<span class="fc" id="L64">	}</span>
+
+	public void saveFile() {
+<span class="nc" id="L67">		try(PrintWriter out = new PrintWriter(file)) {</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">			for(int i=0;i&lt;keys.size();i++){</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">				for(int j=0;j&lt;keys.get(i).size();j++){</span>
+<span class="nc" id="L70">					out.print(keys.get(i).get(j)+&quot;\t&quot;+values.get(i).get(j)+&quot;\t\t&quot;);</span>
+				}
+<span class="nc" id="L72">				out.println();</span>
+			}
+<span class="nc" id="L74">		}catch(Exception ex) {</span>
+<span class="nc" id="L75">			ex.printStackTrace();</span>
+<span class="nc" id="L76">		}</span>
+<span class="nc" id="L77">	}</span>
+
+
+	public void closeFile(BufferedReader reader) {
+		try {
+<span class="nc bnc" id="L82" title="All 2 branches missed.">	        if (reader != null) {</span>
+<span class="nc" id="L83">	            reader.close();</span>
+	        }
+<span class="nc" id="L85">	    } catch (IOException e) {</span>
+<span class="nc" id="L86">	    }</span>
+<span class="nc" id="L87">	}</span>
+
+	public String generateString() {
+<span class="fc" id="L90">		Random random = new Random();</span>
+		String randomString;
+
+<span class="fc" id="L93">		randomString = String.valueOf((char) (random.nextInt(93)+33));</span>
+<span class="fc" id="L94">		randomString += String.valueOf((char) (random.nextInt(93)+33));</span>
+<span class="fc" id="L95">		randomString += String.valueOf((char) (random.nextInt(93)+33));</span>
+
+<span class="fc" id="L97">		return randomString;</span>
+	}
+
+	public void search(String substring) {
+<span class="fc" id="L101">		keyOccurrence=0;</span>
+<span class="fc" id="L102">		valueOccurrence=0;</span>
+<span class="fc" id="L103">		overallOccurrence=0;</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">		for(int i=0;i&lt;keys.size();i++) {</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">			for(int j=0;j&lt;keys.get(i).size();j++) {</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">				for(int k=0;k&lt;=keys.get(i).get(j).length()-substring.length();k++) {</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">					if(substring.equals(keys.get(i).get(j).substring(k,substring.length()+k))) {</span>
+<span class="fc" id="L108">						keyOccurrence++;</span>
+<span class="fc" id="L109">						overallOccurrence++;</span>
+
+					}
+				}
+<span class="fc bfc" id="L113" title="All 2 branches covered.">				for(int k=0;k&lt;=values.get(i).get(j).length()-substring.length();k++) {</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">					if(substring.equals(values.get(i).get(j).substring(k,substring.length()+k))) {</span>
+<span class="fc" id="L115">						valueOccurrence++;</span>
+<span class="fc" id="L116">						overallOccurrence++;</span>
+					}
+				}
+
+<span class="fc bfc" id="L120" title="All 2 branches covered.">				if(keyOccurrence&gt;0) {</span>
+<span class="fc" id="L121">					System.out.println(keyOccurrence+&quot; occurrence(s) at key[&quot;+i+&quot;,&quot;+j+&quot;]&quot;);</span>
+				}
+<span class="fc bfc" id="L123" title="All 2 branches covered.">				if(valueOccurrence&gt;0) {</span>
+<span class="fc" id="L124">					System.out.println(valueOccurrence+&quot; occurrence(s) at value[&quot;+i+&quot;,&quot;+j+&quot;]&quot;);</span>
+				}
+			}
+		}
+<span class="fc bfc" id="L128" title="All 2 branches covered.">		if(overallOccurrence==0) {</span>
+<span class="fc" id="L129">			System.out.println(&quot;String not found&quot;);</span>
+		}
+<span class="fc" id="L131">	}</span>
+
+	public void editKey(int row, int col, String key) {
+		try {
+<span class="fc" id="L135">			keys.get(row).set(col,key);</span>
+<span class="fc" id="L136">		} catch(Exception ex) {</span>
+<span class="fc" id="L137">			System.out.println(&quot;Out array out of bounds&quot;);</span>
+<span class="fc" id="L138">		}</span>
+<span class="fc" id="L139">	}</span>
+
+	public void editValue(int row, int col, String value) {
+		try {
+<span class="fc" id="L143">			values.get(row).set(col,value);</span>
+<span class="fc" id="L144">		} catch(Exception ex) {</span>
+<span class="fc" id="L145">			System.out.println(&quot;Out array out of bounds&quot;);</span>
+<span class="fc" id="L146">		}</span>
+<span class="fc" id="L147">	}</span>
+
+	public void editCell(int row, int col, String key, String value) {
+		try {
+<span class="fc" id="L151">			keys.get(row).set(col,key);</span>
+<span class="fc" id="L152">			values.get(row).set(col,value);</span>
+<span class="fc" id="L153">		} catch(Exception ex) {</span>
+<span class="fc" id="L154">			System.out.println(&quot;Out array out of bounds&quot;);</span>
+<span class="fc" id="L155">		}</span>
+<span class="fc" id="L156">	}</span>
+
+	public void addRow(){
+<span class="fc" id="L159">		Random random = new Random();</span>
+<span class="fc" id="L160">		int cols = random.nextInt(5)+1;</span>
+
+<span class="fc" id="L162">		keys.add(new LinkedList&lt;String&gt;());</span>
+<span class="fc" id="L163">		values.add(new LinkedList&lt;String&gt;());</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">		while(cols&gt;0) {</span>
+<span class="fc" id="L165">			keys.getLast().add(generateString());</span>
+<span class="fc" id="L166">			values.getLast().add(generateString());</span>
+<span class="fc" id="L167">			cols--;</span>
+		}
+<span class="fc" id="L169">	}</span>
+
+	public void addColumn(int row) {
+		try {
+<span class="fc" id="L173">			keys.get(row).add(generateString());</span>
+<span class="fc" id="L174">			values.get(row).add(generateString());</span>
+<span class="fc" id="L175">		} catch(Exception ex) {</span>
+<span class="fc" id="L176">			System.out.println(&quot;Out array out of bounds&quot;);</span>
+<span class="fc" id="L177">		}</span>
+<span class="fc" id="L178">	}</span>
+
+	public void printTable() {
+<span class="nc bnc" id="L181" title="All 2 branches missed.">		for(int i=0;i&lt;keys.size();i++) {</span>
+<span class="nc bnc" id="L182" title="All 2 branches missed.">			for(int j=0;j&lt;keys.get(i).size();j++) {</span>
+<span class="nc" id="L183">				System.out.print(&quot; (&quot;+keys.get(i).get(j)+&quot; : &quot;+values.get(i).get(j)+&quot;) &quot;);</span>
+			}
+<span class="nc" id="L185">			System.out.println();</span>
+		}
+<span class="nc" id="L187">	}</span>
+
+	public void sortRow(int row,int choice) {
+<span class="fc" id="L190">		LinkedList&lt;String&gt; keyValuePairs = new LinkedList&lt;String&gt;();</span>
+		String[] sortedPair;
+<span class="fc" id="L192">		int index=0;</span>
+
+<span class="fc bfc" id="L194" title="All 2 branches covered.">		for(int x=0;x&lt;keys.get(row).size();x++) {</span>
+<span class="fc" id="L195">			keyValuePairs.add(String.join(&quot;\t&quot;,keys.get(row).get(x),values.get(row).get(x)));</span>
+		}
+<span class="fc" id="L197">		Collections.sort(keyValuePairs);</span>
+
+<span class="fc bfc" id="L199" title="All 2 branches covered.">		if(choice == 2){</span>
+<span class="fc" id="L200">			Collections.reverse(keyValuePairs);</span>
+		}
+
+<span class="fc bfc" id="L203" title="All 2 branches covered.">		for(String pair : keyValuePairs) {</span>
+<span class="fc" id="L204">			sortedPair = pair.split(&quot;\t&quot;);</span>
+<span class="fc" id="L205">			keys.get(row).set(index,sortedPair[0]);</span>
+<span class="fc" id="L206">			values.get(row).set(index,sortedPair[1]);</span>
+<span class="fc" id="L207">			index++;</span>
+<span class="fc" id="L208">		}</span>
+<span class="fc" id="L209">	}</span>
+
+	public LinkedList&lt;LinkedList&lt;String&gt;&gt; getKeys() {
+<span class="fc" id="L212">		return keys;</span>
+	}
+	public LinkedList&lt;LinkedList&lt;String&gt;&gt; getValues() {
+<span class="fc" id="L215">		return values;</span>
+	}
+
+	public void setKeys(LinkedList&lt;LinkedList&lt;String&gt;&gt; keys){
+<span class="fc" id="L219">		this.keys = keys;</span>
+<span class="fc" id="L220">	}</span>
+
+	public void setValues(LinkedList&lt;LinkedList&lt;String&gt;&gt; values){
+<span class="fc" id="L223">		this.values = values;</span>
+<span class="fc" id="L224">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

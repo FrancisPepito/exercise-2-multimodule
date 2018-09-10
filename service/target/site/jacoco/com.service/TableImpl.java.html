@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TableImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">com.service</a> &gt; <a href="index.source.html" class="el_package">com.service</a> &gt; <span class="el_source">TableImpl.java</span></div><h1>TableImpl.java</h1><pre class="source lang-java linenums">package com.service;
+
+import java.util.Scanner;
+import java.util.LinkedList;
+import java.util.Collections;
+import java.util.Random;
+import java.io.File;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.PrintWriter;
+import java.io.IOException;
+
+
+public class TableImpl implements TableInterface{
+<span class="pc" id="L15">	private LinkedList&lt;LinkedList&lt;String&gt;&gt; keys = new LinkedList&lt;LinkedList&lt;String&gt;&gt;();</span>
+<span class="pc" id="L16">	private LinkedList&lt;LinkedList&lt;String&gt;&gt; values = new LinkedList&lt;LinkedList&lt;String&gt;&gt;();</span>
+	private File file;
+
+<span class="fc" id="L19">	public TableImpl() {</span>
+<span class="fc" id="L20">		populateTable();</span>
+<span class="fc" id="L21">		file = new File(&quot;defaultFile.txt&quot;);</span>
+<span class="fc" id="L22">	}</span>
+
+<span class="nc" id="L24">	public TableImpl(String filename){</span>
+<span class="nc" id="L25">		file = new File((String) filename);</span>
+<span class="nc" id="L26">		BufferedReader bufferedReader = null;</span>
+		String[] pairs;
+		String[] keyValuePair;
+<span class="nc" id="L29">		String line = null;</span>
+
+		try {
+<span class="nc" id="L32">			bufferedReader = new BufferedReader(new FileReader(file));</span>
+<span class="nc" id="L33">			int counter=0;</span>
+
+<span class="nc bnc" id="L35" title="All 2 branches missed.">			while((line = bufferedReader.readLine()) != null) {</span>
+<span class="nc" id="L36">				pairs = line.split(&quot;\t\t&quot;);</span>
+<span class="nc" id="L37">				keys.add(new LinkedList&lt;String&gt;());</span>
+<span class="nc" id="L38">				values.add(new LinkedList&lt;String&gt;());</span>
+<span class="nc bnc" id="L39" title="All 2 branches missed.">				for(String pair : pairs) {</span>
+<span class="nc" id="L40">					keyValuePair = pair.split(&quot;\t&quot;);</span>
+<span class="nc" id="L41">					keys.get(counter).add(keyValuePair[0]);</span>
+<span class="nc" id="L42">					values.get(counter).add(keyValuePair[1]);</span>
+				}
+<span class="nc" id="L44">				counter++;</span>
+			}
+<span class="nc bnc" id="L46" title="All 6 branches missed.">			if(keys.size()!=values.size()||keys.size()==0||values.size()==0) {</span>
+<span class="nc" id="L47">				System.out.println(&quot;File contains an invalid key-value format. Generating a new table&quot;);</span>
+<span class="nc" id="L48">				populateTable();</span>
+			}
+<span class="nc" id="L50">		}catch(IOException iox) {</span>
+<span class="nc" id="L51">			System.out.println(&quot;File does not exist. Creating a new one&quot;);</span>
+<span class="nc" id="L52">			populateTable();</span>
+		}finally {
+<span class="nc" id="L54">			closeFile(bufferedReader);</span>
+		}
+<span class="nc" id="L56">	}</span>
+
+
+	public void populateTable() {
+<span class="fc" id="L60">		keys.clear();</span>
+<span class="fc" id="L61">		values.clear();</span>
+<span class="fc" id="L62">		Random random = new Random();</span>
+<span class="fc" id="L63">		int rows = random.nextInt(5)+1;</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">		for(int x=0;x&lt;rows;x++){</span>
+<span class="fc" id="L65">			addRow();</span>
+		}
+<span class="fc" id="L67">	}</span>
+
+	public void saveFile() {
+<span class="nc" id="L70">		System.out.println(file);</span>
+<span class="nc" id="L71">		try(PrintWriter out = new PrintWriter(file)) {</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">			for(int i=0;i&lt;keys.size();i++){</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">				for(int j=0;j&lt;keys.get(i).size();j++){</span>
+<span class="nc" id="L74">					out.print(keys.get(i).get(j)+&quot;\t&quot;+values.get(i).get(j)+&quot;\t\t&quot;);</span>
+				}
+<span class="nc" id="L76">				out.println();</span>
+			}
+<span class="nc" id="L78">		}catch(Exception ex) {</span>
+<span class="nc" id="L79">			ex.printStackTrace();</span>
+<span class="nc" id="L80">		}</span>
+<span class="nc" id="L81">	}</span>
+
+
+	public int returnOne() {
+<span class="fc" id="L85">		return 1;</span>
+	}
+
+	public void closeFile(BufferedReader reader) {
+		try {
+<span class="nc bnc" id="L90" title="All 2 branches missed.">	        if (reader != null) {</span>
+<span class="nc" id="L91">	            reader.close();</span>
+	        }
+<span class="nc" id="L93">	    } catch (IOException e) {</span>
+<span class="nc" id="L94">	    }</span>
+<span class="nc" id="L95">	}</span>
+
+	public String generateString() {
+<span class="fc" id="L98">		Random random = new Random();</span>
+		String randomString;
+
+<span class="fc" id="L101">		randomString = String.valueOf((char) (random.nextInt(93)+33));</span>
+<span class="fc" id="L102">		randomString += String.valueOf((char) (random.nextInt(93)+33));</span>
+<span class="fc" id="L103">		randomString += String.valueOf((char) (random.nextInt(93)+33));</span>
+
+<span class="fc" id="L105">		return randomString;</span>
+	}
+
+	public void search(String substring) {
+<span class="nc" id="L109">		int keyOccurrence=0;</span>
+<span class="nc" id="L110">		int valueOccurrence=0;</span>
+<span class="nc" id="L111">		int overallOccurrence=0;</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">		for(int i=0;i&lt;keys.size();i++) {</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">			for(int j=0;j&lt;keys.get(i).size();j++) {</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">				for(int k=0;k&lt;=keys.get(i).get(j).length()-substring.length();k++) {</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">					if(substring.equals(keys.get(i).get(j).substring(k,substring.length()+k))) {</span>
+<span class="nc" id="L116">						keyOccurrence++;</span>
+<span class="nc" id="L117">						overallOccurrence++;</span>
+
+					}
+				}
+<span class="nc bnc" id="L121" title="All 2 branches missed.">				for(int k=0;k&lt;=values.get(i).get(j).length()-substring.length();k++) {</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">					if(substring.equals(values.get(i).get(j).substring(k,substring.length()+k))) {</span>
+<span class="nc" id="L123">						valueOccurrence++;</span>
+<span class="nc" id="L124">						overallOccurrence++;</span>
+					}
+				}
+
+<span class="nc bnc" id="L128" title="All 2 branches missed.">				if(keyOccurrence&gt;0) {</span>
+<span class="nc" id="L129">					System.out.println(keyOccurrence+&quot; occurrence(s) at key[&quot;+i+&quot;,&quot;+j+&quot;]&quot;);</span>
+				}
+<span class="nc bnc" id="L131" title="All 2 branches missed.">				if(valueOccurrence&gt;0) {</span>
+<span class="nc" id="L132">					System.out.println(valueOccurrence+&quot; occurrence(s) at value[&quot;+i+&quot;,&quot;+j+&quot;]&quot;);</span>
+				}
+<span class="nc" id="L134">				keyOccurrence=0;</span>
+<span class="nc" id="L135">				valueOccurrence=0;</span>
+			}
+		}
+<span class="nc bnc" id="L138" title="All 2 branches missed.">		if(overallOccurrence==0) {</span>
+<span class="nc" id="L139">			System.out.println(&quot;String not found&quot;);</span>
+		}
+<span class="nc" id="L141">	}</span>
+
+	public void editKey(int row, int col, String key) {
+		try {
+<span class="nc" id="L145">			keys.get(row).set(col,key);</span>
+<span class="nc" id="L146">		} catch(Exception ex) {</span>
+<span class="nc" id="L147">			System.out.println(&quot;Out array out of bounds&quot;);</span>
+<span class="nc" id="L148">		}</span>
+<span class="nc" id="L149">	}</span>
+
+	public void editValue(int row, int col, String value) {
+		try {
+<span class="nc" id="L153">			values.get(row).set(col,value);</span>
+<span class="nc" id="L154">		} catch(Exception ex) {</span>
+<span class="nc" id="L155">			System.out.println(&quot;Out array out of bounds&quot;);</span>
+<span class="nc" id="L156">		}</span>
+<span class="nc" id="L157">	}</span>
+
+	public void editCell(int row, int col, String key, String value) {
+		try {
+<span class="nc" id="L161">			keys.get(row).set(col,key);</span>
+<span class="nc" id="L162">			values.get(row).set(col,value);</span>
+<span class="nc" id="L163">		} catch(Exception ex) {</span>
+<span class="nc" id="L164">			System.out.println(&quot;Out array out of bounds&quot;);</span>
+<span class="nc" id="L165">		}</span>
+<span class="nc" id="L166">	}</span>
+
+	public void addRow(){
+<span class="fc" id="L169">		Random random = new Random();</span>
+<span class="fc" id="L170">		int cols = random.nextInt(5)+1;</span>
+
+<span class="fc" id="L172">		keys.add(new LinkedList&lt;String&gt;());</span>
+<span class="fc" id="L173">		values.add(new LinkedList&lt;String&gt;());</span>
+<span class="fc bfc" id="L174" title="All 2 branches covered.">		while(cols&gt;0) {</span>
+<span class="fc" id="L175">			keys.getLast().add(generateString());</span>
+<span class="fc" id="L176">			values.getLast().add(generateString());</span>
+<span class="fc" id="L177">			cols--;</span>
+		}
+<span class="fc" id="L179">	}</span>
+
+	public void addColumn(int row) {
+		try {
+<span class="nc" id="L183">			keys.get(row).add(generateString());</span>
+<span class="nc" id="L184">			values.get(row).add(generateString());</span>
+<span class="nc" id="L185">		} catch(Exception ex) {</span>
+<span class="nc" id="L186">			System.out.println(&quot;Out array out of bounds&quot;);</span>
+<span class="nc" id="L187">		}</span>
+<span class="nc" id="L188">	}</span>
+
+	public void printTable() {
+<span class="nc bnc" id="L191" title="All 2 branches missed.">		for(int i=0;i&lt;keys.size();i++) {</span>
+<span class="nc bnc" id="L192" title="All 2 branches missed.">			for(int j=0;j&lt;keys.get(i).size();j++) {</span>
+<span class="nc" id="L193">				System.out.print(&quot; (&quot;+keys.get(i).get(j)+&quot; : &quot;+values.get(i).get(j)+&quot;) &quot;);</span>
+			}
+<span class="nc" id="L195">			System.out.println();</span>
+		}
+<span class="nc" id="L197">	}</span>
+
+	public void sortRow(int row,int choice) {
+<span class="nc" id="L200">		LinkedList&lt;String&gt; keyValuePairs = new LinkedList&lt;String&gt;();</span>
+		String[] sortedPair;
+<span class="nc" id="L202">		int index=0;</span>
+
+<span class="nc bnc" id="L204" title="All 2 branches missed.">		for(int x=0;x&lt;keys.get(row).size();x++) {</span>
+<span class="nc" id="L205">			keyValuePairs.add(String.join(&quot;\t&quot;,keys.get(row).get(x),values.get(row).get(x)));</span>
+		}
+<span class="nc" id="L207">		Collections.sort(keyValuePairs);</span>
+
+<span class="nc bnc" id="L209" title="All 2 branches missed.">		if(choice == 2){</span>
+<span class="nc" id="L210">			Collections.reverse(keyValuePairs);</span>
+		}
+
+<span class="nc bnc" id="L213" title="All 2 branches missed.">		for(String pair : keyValuePairs) {</span>
+<span class="nc" id="L214">			sortedPair = pair.split(&quot;\t&quot;);</span>
+<span class="nc" id="L215">			keys.get(row).set(index,sortedPair[0]);</span>
+<span class="nc" id="L216">			values.get(row).set(index,sortedPair[1]);</span>
+<span class="nc" id="L217">			index++;</span>
+<span class="nc" id="L218">		}</span>
+<span class="nc" id="L219">	}</span>
+
+	public LinkedList&lt;LinkedList&lt;String&gt;&gt; getKeys() {
+<span class="nc" id="L222">		return keys;</span>
+	}
+	public LinkedList&lt;LinkedList&lt;String&gt;&gt; getValues() {
+<span class="nc" id="L225">		return values;</span>
+	}
+
+	public static void main(String[] args) {
+		TableImpl table1;
+		int choice;
+		try{
+<span class="nc" id="L232">			table1 = new TableImpl(args[0]);</span>
+<span class="nc" id="L233">		}catch(Exception ex) {</span>
+<span class="nc" id="L234">			table1 = new TableImpl();</span>
+<span class="nc" id="L235">		}</span>
+<span class="nc" id="L236">		table1.printTable();</span>
+<span class="nc" id="L237">		table1.saveFile();</span>
+
+<span class="nc" id="L239">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>
